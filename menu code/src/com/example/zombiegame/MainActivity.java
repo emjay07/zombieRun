@@ -2,24 +2,26 @@ package com.example.zombiegame;
 
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.PopupWindow;
-import android.view.Display;
-import android.view.MenuItem;
 //import android.view.WindowManager.LayoutParams;
-import android.widget.FrameLayout;
 
 public class MainActivity extends Activity {
 	
 	View popupView = null;
 	PopupWindow popupWindow = null;
+	
+	
 	
 	@Override
 	   public void onBackPressed() {
@@ -28,6 +30,7 @@ public class MainActivity extends Activity {
 	    	  finish();
 	      } else {
 	    	  popupWindow.dismiss();
+	    	  popupWindow = null;
 	      }
 	   }
 	
@@ -37,10 +40,15 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
+
+        
         final Button playButton = (Button) findViewById(R.id.button1);
         playButton.setOnClickListener(new Button.OnClickListener() {
         	public void onClick(View arg0) {
-        		//TODO: start new activity
+        		//change the second arguement to the intent constructor to change what it runs when 
+        		//you hit play. 
+        		Intent myIntent = new Intent(MainActivity.this, TiltBallActivity.class);
+        		startActivity(myIntent);
         	}
         });
         
@@ -49,6 +57,11 @@ public class MainActivity extends Activity {
         selectLevelPopup.setOnClickListener(new Button.OnClickListener(){
         	//@Override
     	    public void onClick(View arg0) {
+    	    	
+    	    	if(popupWindow != null) {
+    	    		popupWindow.dismiss();
+    	    		popupWindow = null;
+    	    	}
 	    	    LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
 	    	    popupView = layoutInflater.inflate(R.layout.select_level_popup, null);
 	    	    popupWindow = new PopupWindow(popupView, LayoutParams.WRAP_CONTENT,  LayoutParams.WRAP_CONTENT);
@@ -61,6 +74,7 @@ public class MainActivity extends Activity {
 				     //@Override
 				     public void onClick(View v) {
 				    	 //TODO set level
+				    	 
 				      popupWindow.dismiss();
 				      popupWindow = null;
 				     }
@@ -95,6 +109,11 @@ public class MainActivity extends Activity {
         upgradeMenuPopup.setOnClickListener(new Button.OnClickListener(){
         	//@Override
     	    public void onClick(View arg0) {
+    	    	
+    	    	if(popupWindow != null) {
+    	    		popupWindow.dismiss();
+    	    		popupWindow = null;
+    	    	}
 	    	    LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
 	    	    popupView = layoutInflater.inflate(R.layout.upgrades_menu_popup, null);
 	    	    popupWindow = new PopupWindow(popupView, LayoutParams.WRAP_CONTENT,  LayoutParams.WRAP_CONTENT);
@@ -125,10 +144,8 @@ public class MainActivity extends Activity {
         StatisticsPopup.setOnClickListener(new Button.OnClickListener(){
         	//@Override
     	    public void onClick(View arg0) {
-	    	    LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
-	    	    popupView = layoutInflater.inflate(R.layout.default_view, null);
-	    	    popupWindow = new PopupWindow(popupView, LayoutParams.WRAP_CONTENT,  LayoutParams.WRAP_CONTENT);
-	    	    
+    	    	Intent myIntent = new Intent(MainActivity.this, GameActivity.class);
+        		startActivity(myIntent);
     	    }
         });
         
@@ -137,10 +154,8 @@ public class MainActivity extends Activity {
         TutorialPopup.setOnClickListener(new Button.OnClickListener(){
         	//@Override
     	    public void onClick(View arg0) {
-	    	    LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
-	    	    popupView = layoutInflater.inflate(R.layout.default_view, null);
-	    	    popupWindow = new PopupWindow(popupView, LayoutParams.WRAP_CONTENT,  LayoutParams.WRAP_CONTENT);
-	    	    
+    	    	Intent myIntent = new Intent(MainActivity.this, TiltBallActivity.class);
+        		startActivity(myIntent);
     	    }
         });
     }
@@ -150,4 +165,6 @@ public class MainActivity extends Activity {
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
+    
+
 }

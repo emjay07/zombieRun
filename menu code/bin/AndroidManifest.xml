@@ -20,6 +20,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name=".GameActivity"
+            android:label="@string/title_activity_game" >
+            <meta-data
+                android:name = "android.support.PARENT_ACTIVITY"
+                android:value="com.example.zombiegame.MainActivity"/>
+        </activity>
+        
+        <activity
+            android:name = ".TiltBallActivity"
+            android:label = "tilt_Ball" >
+            
+            <meta-data
+                android:name = "android.support.PARENT_ACTIVITY"
+                android:value = "com.example.zombiegame.TiltBallActivity"/>
+        </activity>
     </application>
 
 </manifest>

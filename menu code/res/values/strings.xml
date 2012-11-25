@@ -10,5 +10,6 @@
     <string name="StatisticsButton">Statistics</string>
     <string name="UpgradesButton">Upgrades</string>
     <string name="TutorialButton">Tutorial</string>
+    <string name="title_activity_game">Zombie Game</string>
 
 </resources>
