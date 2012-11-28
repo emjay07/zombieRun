@@ -2,6 +2,7 @@ package umn.edu.cs.zombie.model;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 
 public class Player {
 	
@@ -27,6 +28,14 @@ public class Player {
 	
 	public int getLife() {
 		return this.life;
+	}
+	
+	public void addLife(int x) {
+		this.life += x;
+		if(this.life > 100) {
+			this.life = 100;
+			this.lifeCount++;
+		}
 	}
 	
 	public void decrementLife() {
@@ -84,11 +93,14 @@ public class Player {
 		return this.y;
 	}
 	
-	public bitmap getBitmap() {
+	public Bitmap getBitmap() {
 		return this.image;
 	}
 	
 	public void draw(Canvas canvas) {
+//		Rect destRect = null;
+//		destRect.set((int) y-(image.getWidth()/2), (int) x - image.getHeight()/2,(int) y + (image.getWidth()/2),(int) x + image.getHeight()/2);
+		//canvas.drawBitmap(image, null, destRect, null);
 		canvas.drawBitmap(image, y - (image.getWidth() / 2), x - (image.getHeight() / 2), null);
 	}
 	
