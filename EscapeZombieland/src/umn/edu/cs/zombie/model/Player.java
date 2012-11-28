@@ -76,6 +76,18 @@ public class Player {
 		return this.isDead;
 	}
 	
+	public float getX() {
+		return this.x;
+	}
+	
+	public float getY() {
+		return this.y;
+	}
+	
+	public bitmap getBitmap() {
+		return this.image;
+	}
+	
 	public void draw(Canvas canvas) {
 		canvas.drawBitmap(image, y - (image.getWidth() / 2), x - (image.getHeight() / 2), null);
 	}

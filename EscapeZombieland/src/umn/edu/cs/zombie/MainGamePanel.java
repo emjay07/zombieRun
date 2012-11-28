@@ -8,7 +8,6 @@ import java.util.Random;
 
 import umn.edu.cs.zombie.R;
 import umn.edu.cs.zombie.model.Zombie;
-import umn.edu.cs.zombie.model.Health;
 import umn.edu.cs.zombie.model.Player;
 import umn.edu.cs.zombie.model.components.Speed;
 
@@ -249,8 +248,9 @@ public class MainGamePanel extends SurfaceView implements
 	 * engine's update method.
 	 */
 	public void update() {
-		// check collision with right wall if heading right
+		
 		for(Zombie zombie : zombies) {
+			// check collision with right wall if heading right
 			if (zombie.getSpeed().getxDirection() == Speed.DIRECTION_RIGHT
 					&& zombie.getX() + zombie.getBitmap().getWidth() / 2 >= getWidth()) {
 				zombie.getSpeed().toggleXDirection();
@@ -270,6 +270,13 @@ public class MainGamePanel extends SurfaceView implements
 					&& zombie.getY() - zombie.getBitmap().getHeight() / 2 <= 0) {
 				zombie.getSpeed().toggleYDirection();
 			}
+			
+			if( isCollision(player, zombie) ) {
+				//take away health
+				//maybe do something else
+			}
+			
+			
 			zombie.update();
 		}
 		for(Health health : heals) {
@@ -277,8 +284,78 @@ public class MainGamePanel extends SurfaceView implements
 			if(health.getX() >= height) {
 				health.setX(0);
 			}
+			if(isCollision(player, health)) {
+				//increase health of player
+				//make health orb go away
+			}
 		}
+		
+		//obstacle code
 		player.update(ySpeed, leftbound, rightbound);
 	}
+	
+	public boolean isCollision(Player player, Zombie zombie) {
+		boolean result;
+		float playerLeft = player.getX();// - player.getBitmap().getWidth()/2;
+		float playerRight = player.getX() + player.getBitmap().getWidth();
+		float playerTop = Player.getY();// + player.getBitmap().getHeight()/2;
+		float playerBottom = Player.getY(); - player.getBitmap().getHeight();
+		float zombieLeft = zombie.getX() - zombie.getBitmap().getWidth()/2;
+		float zombieRight = zombie.getX() + zombie.getBitmap().getWidth()/2;
+		float zombieTop = zombie.getY() + zombie.getBitmap().getWidth()/2;
+		float zombieBottom = zombie.getY() - zombie.getBitmap().getWidth()/2;		
+		
+		
+		if( (zombieRight > playerLeft && zombieBottom < playerTop && zombieTop > playerTop && zombieLeft < playerLeft) ||
+			(zombieRight > playerRight && zombieBottom < playerTop && zombieTop > playerTop && zombieLeft < playerRight) ||
+			(zombieRight > playerLeft && zombieBottom < playerBottom && zombieTop > playerBottom && zombieLeft < playerLeft) ||
+			(zombieRight > playerRight && zombieBottom < playerBottom && zombieTop > playerBottom && zombieLeft < playerRight) ) 
+				return true;
+		
+		return false;
+	}
+	
+	public boolean isCollision(Player player, Health health) {
+		boolean result;
+		float playerLeft = player.getX();// - player.getBitmap().getWidth()/2;
+		float playerRight = player.getX() + player.getBitmap().getWidth();
+		float playerTop = Player.getY();// + player.getBitmap().getHeight()/2;
+		float playerBottom = Player.getY(); - player.getBitmap().getHeight();
+		float healthLeft = health.getX() - health.getBitmap().getWidth()/2;
+		float healthRight = health.getX() + health.getBitmap().getWidth()/2;
+		float healthTop = health.getY() + health.getBitmap().getWidth()/2;
+		float healthBottom = health.getY() - health.getBitmap().getWidth()/2;		
+		
+		if( (healthRight > playerLeft && healthBottom < playerTop && healthTop > playerTop && healthLeft < playerLeft) ||
+			(healthRight > playerRight && healthBottom < playerTop && healthTop > playerTop && healthLeft < playerRight) ||
+			(healthRight > playerLeft && healthBottom < playerBottom && healthTop > playerBottom && healthLeft < playerLeft) ||
+			(healthRight > playerRight && healthBottom < playerBottom && healthTop > playerBottom && healthLeft < playerRight) ) 
+				return true;
+		
+		return false;
+	}
+	
+	//this is commented because Obstacle isn't created yet....
+	// public boolean isCollision(Player player, Obstacle obstacle) {
+		// boolean result;
+		// float playerLeft = player.getX();// - player.getBitmap().getWidth()/2;
+		// float playerRight = player.getX() + player.getBitmap().getWidth();
+		// float playerTop = Player.getY();// + player.getBitmap().getHeight()/2;
+		// float playerBottom = Player.getY(); - player.getBitmap().getHeight();
+		// float obstacleLeft = obstacle.getX() - obstacle.getBitmap().getWidth()/2;
+		// float obstacleRight = obstacle.getX() + obstacle.getBitmap().getWidth()/2;
+		// float obstacleTop = obstacle.getY() + obstacle.getBitmap().getWidth()/2;
+		// float obstacleBottom = obstacle.getY() - obstacle.getBitmap().getWidth()/2;		
+		
+		
+		// if( (obstacleRight > playerLeft && obstacleBottom < playerTop && obstacleTop > playerTop && obstacleLeft < playerLeft) ||
+			// (obstacleRight > playerRight && obstacleBottom < playerTop && obstacleTop > playerTop && obstacleLeft < playerRight) ||
+			// (obstacleRight > playerLeft && obstacleBottom < playerBottom && obstacleTop > playerBottom && obstacleLeft < playerLeft) ||
+			// (obstacleRight > playerRight && obstacleBottom < playerBottom && obstacleTop > playerBottom && obstacleLeft < playerRight) ) 
+				// return true;
+		
+		// return false;
+	// }
 
+	
 }

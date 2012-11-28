@@ -1,8 +1,6 @@
-package umn.edu.cs.zombie.model;
+package umn.edu.cs.zombie;
 
 import umn.edu.cs.zombie.model.components.Speed;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 
 public class Health {
 
