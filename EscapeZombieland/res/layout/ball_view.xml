@@ -1,0 +1,23 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/main_view">
+    
+    <ImageView
+	     android:id="@+id/downView"
+	     android:layout_width="match_parent"
+	     android:layout_height="match_parent"/>
+    <ImageView
+	     android:id="@+id/upView"
+	     android:layout_width="match_parent"
+	     android:layout_height="match_parent"/>
+    <ImageView
+	     android:id="@+id/leftView"
+	     android:layout_width="match_parent"
+	     android:layout_height="match_parent"/>
+    <ImageView
+	     android:id="@+id/rightView"
+	     android:layout_width="match_parent"
+	     android:layout_height="match_parent"/>
+</FrameLayout>

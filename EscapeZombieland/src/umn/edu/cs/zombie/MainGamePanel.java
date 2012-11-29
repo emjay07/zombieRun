@@ -270,7 +270,7 @@ public class MainGamePanel extends SurfaceView implements
 			}
 			
 			if( isCollision(player, zombie) ) {
-//				player.decrementLife();
+				player.decrementLife();
 //				zombies.remove(zombie);
 //				Zombie z = new Zombie(_zombie, generator.nextInt()%height + 10, generator.nextInt()%width + 10);
 //				zombies.add(z);
@@ -289,7 +289,7 @@ public class MainGamePanel extends SurfaceView implements
 			if(isCollision(player, health)) {
 				heals.remove(health);
 				heals.add(new Health(_smallOrb, 0, generator.nextInt((int)(rightbound-leftbound))+(int)leftbound));
-				player.addLife(25);
+				player.setHealthPieces(1);
 				//increase health of player
 				//make health orb go away
 			}
@@ -390,5 +390,20 @@ public class MainGamePanel extends SurfaceView implements
 		// return false;
 	// }
 
-	
+	public void destroy() {
+		getHolder().removeCallback(this);
+//		boolean retry = true;
+//		while (retry) {
+//			try {
+//				thread.join();
+//				retry = false;
+//			} catch (InterruptedException e) {
+//				// try again shutting down the thread
+//			}
+//		}
+		zombies.clear();
+		heals.clear();
+		player = null;
+		generator = null;
+	}
 }

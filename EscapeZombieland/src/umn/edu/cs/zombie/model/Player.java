@@ -68,6 +68,7 @@ public class Player {
 			this.healthPieces += add;
 			if(this.healthPieces >= 100) {
 				this.healthPieces -= 100;
+				this.life = 100;
 				this.lifeCount++;
 			}
 		}
