@@ -11,7 +11,7 @@ public class Health {
 	private int y;			// the Y coordinate
 	private Speed speed;	// the speed with its directions
 	
-	public Health(Bitmap bitmap, int x, int y) {
+	public Health(Bitmap bitmap, int x, int y, float vel) {
 		this.bitmap = bitmap;
 		this.x = x;
 		this.y = y;
