@@ -106,4 +106,8 @@ public class Player {
 		}
 	}
 	
+	public void destroy() {
+		this.image.recycle();
+	}
+	
 }

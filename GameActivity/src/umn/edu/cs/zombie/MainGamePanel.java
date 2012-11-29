@@ -6,13 +6,11 @@ package umn.edu.cs.zombie;
 import java.util.ArrayList;
 import java.util.Random;
 
-import umn.edu.cs.zombie.R;
-import umn.edu.cs.zombie.model.Obstacle;
-import umn.edu.cs.zombie.model.Zombie;
 import umn.edu.cs.zombie.model.Health;
+import umn.edu.cs.zombie.model.Obstacle;
 import umn.edu.cs.zombie.model.Player;
+import umn.edu.cs.zombie.model.Zombie;
 import umn.edu.cs.zombie.model.components.Speed;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -27,10 +25,15 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.PopupWindow;
 
 /**
  * @author emily
@@ -43,6 +46,7 @@ public class MainGamePanel extends SurfaceView implements
 	private static final String TAG = MainGamePanel.class.getSimpleName();
 	
 	private MainThread thread;
+	private Context baseContext;
 	//private Zombie zombie;
 	//private Health health;
 	private ArrayList<Zombie> zombies;
@@ -74,6 +78,7 @@ public class MainGamePanel extends SurfaceView implements
 
 	public MainGamePanel(Context context) {
 		super(context);
+		baseContext = context;
 		// adding the callback (this) to the surface holder to intercept events
 		getHolder().addCallback(this);
 		
@@ -167,45 +172,61 @@ public class MainGamePanel extends SurfaceView implements
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		if (event.getAction() == MotionEvent.ACTION_DOWN) {
-			int eventX = (int)event.getX();
-			int eventY = (int)event.getY();
-			//margin, speedCurr, margin+barHeight, speedCurr+(barHeight-margin)
-			if(eventX >= margin && eventX <= margin+barHeight &&
-					eventY >= speedCurr && eventY <= speedCurr+(barHeight-margin)) {
-				speedBar = true;
-			}
-		}
-		if(event.getAction() == MotionEvent.ACTION_MOVE) {
-			//click and drag - speed bar
-			if(speedBar) {
+		if(!pause) {
+			if (event.getAction() == MotionEvent.ACTION_DOWN) {
+				int eventX = (int)event.getX();
 				int eventY = (int)event.getY();
-			
-				if(eventY <= speedBarMin && eventY >= speedBarMax) {
-					speedCurr = eventY;
+				//margin, speedCurr, margin+barHeight, speedCurr+(barHeight-margin)
+				if(eventX >= margin && eventX <= margin+barHeight &&
+						eventY >= speedCurr && eventY <= speedCurr+(barHeight-margin)) {
+					speedBar = true;
 				}
 			}
-		}
-		if (event.getAction() == MotionEvent.ACTION_UP) {
-			if(speedBar) {
-				speedBar = false;
-			}
-			int eventX = (int)event.getX();
-			int eventY = (int)event.getY();
-			if(eventX >= (margin) && eventX <= ((2*margin)+((float)(margin/2.0))) &&
-					eventY >= (height-margin-barHeight) && eventY <=(height-margin)) {
-					pause = !pause;
-			}
-			for(int i = 0; i < zombies.size(); i++) {
-				Zombie zombie = zombies.get(i);
-				if (eventX >= (zombie.getY() - zombie.getBitmap().getWidth() / 2) && (eventX <= (zombie.getY() + zombie.getBitmap().getWidth()/2))) {
-					if (eventY >= (zombie.getX() - zombie.getBitmap().getHeight() / 2) && (eventY <= (zombie.getX() + zombie.getBitmap().getHeight() / 2))) {
-						// touch was released
-						zombies.remove(i);
-						Zombie z = new Zombie(_zombie, generator.nextInt()%height + 10, generator.nextInt()%width + 10);
-						zombies.add(z);
-						player.incrementKillCount();
+			if(event.getAction() == MotionEvent.ACTION_MOVE) {
+				//click and drag - speed bar
+				if(speedBar) {
+					int eventY = (int)event.getY();
+				
+					if(eventY <= speedBarMin && eventY >= speedBarMax) {
+						speedCurr = eventY;
 					}
+				}
+			}
+			if (event.getAction() == MotionEvent.ACTION_UP) {
+				if(speedBar) {
+					speedBar = false;
+				}
+				int eventX = (int)event.getX();
+				int eventY = (int)event.getY();
+				if(eventX >= (margin) && eventX <= ((2*margin)+((float)(margin/2.0))) &&
+						eventY >= (height-margin-barHeight) && eventY <=(height-margin)) {
+						pause = !pause;
+				}
+				for(int i = 0; i < zombies.size(); i++) {
+					Zombie zombie = zombies.get(i);
+					if (eventX >= (zombie.getY() - zombie.getBitmap().getWidth() / 2) && (eventX <= (zombie.getY() + zombie.getBitmap().getWidth()/2))) {
+						if (eventY >= (zombie.getX() - zombie.getBitmap().getHeight() / 2) && (eventY <= (zombie.getX() + zombie.getBitmap().getHeight() / 2))) {
+							// touch was released
+							zombies.remove(i);
+							Zombie z = new Zombie(_zombie, generator.nextInt()%height + 10, generator.nextInt()%width + 10);
+							zombies.add(z);
+							player.incrementKillCount();
+						}
+					}
+				}
+			}
+		} else {
+			//width/3 + width/30, height/2 + height/30, 2*width/3 - width/30, 3*height/4 - height/30
+			if (event.getAction() == MotionEvent.ACTION_UP) {
+				int eventX = (int)event.getX();
+				int eventY = (int)event.getY();
+				if(eventX > (width/3 + width/30) && eventY > (height/4 + height/30) && 
+				   eventX < (2*width/3 - width/30) && eventY < (height/2 - height/30)) {
+					pause = !pause;
+				}
+				if(eventX > (width/3 + width/30) && eventY > (height/2 + height/30) && 
+				   eventX < (2*width/3 - width/30) && eventY < (3*height/4 - height/30)) {
+					this.destroy();
 				}
 			}
 		}
@@ -313,13 +334,23 @@ public class MainGamePanel extends SurfaceView implements
 		canvas.drawRect(margin, speedCurr, margin+barHeight, speedCurr+(barHeight-margin), paint);
 		/** SPEED BAR **/
 		
+		
 		//if paused...
 		if(pause) {
 			paint.setARGB(alpha_o, 128, 128, 128);
 			paint.setStyle(Paint.Style.FILL);
 			canvas.drawRect(0, 0, width, height, paint);
-		}
-		
+			//code for the "pause menu"
+			paint.setColor(Color.BLACK);
+			canvas.drawRect(width/3, height/4, 2*width/3, 3*height/4, paint);
+			paint.setColor(Color.RED);
+			//these values are fairly arbitrary...
+			canvas.drawRect(width/3 + width/30, height/4 + height/30, 2*width/3 - width/30, height/2 - height/30, paint);
+			canvas.drawRect(width/3 + width/30, height/2 + height/30, 2*width/3 - width/30, 3*height/4 - height/30, paint);
+			paint.setColor(Color.BLACK);
+			canvas.drawText("Resume Game", width/3 + width/10, 3*height/8, paint);
+			canvas.drawText("Exit Game", width/3 + width/8, 5*height/8, paint);
+		} 
 	}
 
 	/**
@@ -393,16 +424,14 @@ public class MainGamePanel extends SurfaceView implements
 	}
 	
 	public boolean isCollision(Player player, Zombie zombie) {
-		//y - (image.getWidth() / 2) = left
-		//x - (image.getHeight() / 2)
 		float playerLeft = player.getY() - player.getBitmap().getWidth()/2;
 		float playerRight = player.getY() + player.getBitmap().getWidth()/2;
 		float playerTop = player.getX() - player.getBitmap().getHeight()/2;
 		float playerBottom = player.getX() + player.getBitmap().getHeight()/2;
-		float zombieLeft = zombie.getX() - zombie.getBitmap().getWidth()/2;
-		float zombieRight = zombie.getX() + zombie.getBitmap().getWidth()/2;
-		float zombieTop = zombie.getY() + zombie.getBitmap().getWidth()/2;
-		float zombieBottom = zombie.getY() - zombie.getBitmap().getWidth()/2;		
+		float zombieLeft = zombie.getY() - zombie.getBitmap().getWidth()/2;
+		float zombieRight = zombie.getY() + zombie.getBitmap().getWidth()/2;
+		float zombieTop = zombie.getX() + zombie.getBitmap().getHeight()/2;
+		float zombieBottom = zombie.getX() - zombie.getBitmap().getHeight()/2;		
 
 		if( (zombieRight > playerLeft && zombieBottom < playerTop && zombieTop > playerTop && zombieLeft < playerLeft) ||
 				(zombieRight > playerRight && zombieBottom < playerTop && zombieTop > playerTop && zombieLeft < playerRight) ||
@@ -413,33 +442,6 @@ public class MainGamePanel extends SurfaceView implements
 
 		return false;
 	}
-
-//	public boolean isCollision(Player player, Zombie zombie) {
-//		//y - (image.getWidth() / 2) = left
-//		//x - (image.getHeight() / 2)
-//		float playerCenterX = player.getX();
-//		float playerCenterY = player.getY();
-//		float playerLeft = player.getY() - player.getBitmap().getWidth()/2;
-//		float playerRight = player.getY() + player.getBitmap().getWidth()/2;
-//		float playerTop = player.getX() - player.getBitmap().getHeight()/2;
-//		float playerBottom = player.getX() + player.getBitmap().getHeight()/2;
-//		float zombieLeft = zombie.getX() - zombie.getBitmap().getWidth()/2;
-//		float zombieRight = zombie.getX() + zombie.getBitmap().getWidth()/2;
-//		float zombieTop = zombie.getY() + zombie.getBitmap().getWidth()/2;
-//		float zombieBottom = zombie.getY() - zombie.getBitmap().getWidth()/2;		
-//		
-////		if(zombieRight > playerCenterX && zombieLeft < playerCenterX && zombieTop < playerCenterY && zombieBottom > playerCenterY)
-////			return true;
-//		
-//		if( (zombieRight > playerLeft && zombieBottom < playerTop && zombieTop > playerTop && zombieLeft < playerLeft) ||
-//				(zombieRight > playerRight && zombieBottom < playerTop && zombieTop > playerTop && zombieLeft < playerRight) ||
-//				(zombieRight > playerLeft && zombieBottom < playerBottom && zombieTop > playerBottom && zombieLeft < playerLeft) ||
-//				(zombieRight > playerRight && zombieBottom < playerBottom && zombieTop > playerBottom && zombieLeft < playerRight) ||
-//				(zombieRight < playerRight && zombieBottom < playerBottom && zombieTop > playerTop && zombieLeft > playerLeft)) 
-//					return true;
-//			
-//		return false;
-//	}
 
 	public boolean isCollision(Player player, Health health) {
 		float playerLeft = player.getY() - player.getBitmap().getWidth()/2;
@@ -461,30 +463,28 @@ public class MainGamePanel extends SurfaceView implements
 		return false;
 	}
 
-	//this is commented because Obstacle isn't created yet....
-	// public boolean isCollision(Player player, Obstacle obstacle) {
-		// boolean result;
-		// float playerLeft = player.getX();// - player.getBitmap().getWidth()/2;
-		// float playerRight = player.getX() + player.getBitmap().getWidth();
-		// float playerTop = Player.getY();// + player.getBitmap().getHeight()/2;
-		// float playerBottom = Player.getY(); - player.getBitmap().getHeight();
-		// float obstacleLeft = obstacle.getX() - obstacle.getBitmap().getWidth()/2;
-		// float obstacleRight = obstacle.getX() + obstacle.getBitmap().getWidth()/2;
-		// float obstacleTop = obstacle.getY() + obstacle.getBitmap().getWidth()/2;
-		// float obstacleBottom = obstacle.getY() - obstacle.getBitmap().getWidth()/2;		
+	 public boolean isCollision(Player player, Obstacle obstacle) {
+		 float playerLeft = player.getY() - player.getBitmap().getWidth()/2;
+		 float playerRight = player.getY() + player.getBitmap().getWidth();
+		 float playerTop = player.getX() - player.getBitmap().getHeight()/2;
+		 float playerBottom = player.getX() - player.getBitmap().getHeight()/2;
+		 float obstacleLeft = obstacle.getY() - obstacle.getBitmap().getWidth()/2;
+		 float obstacleRight = obstacle.getY() + obstacle.getBitmap().getWidth()/2;
+		 float obstacleTop = obstacle.getX() + obstacle.getBitmap().getHeight()/2;
+		 float obstacleBottom = obstacle.getX() - obstacle.getBitmap().getHeight()/2;		
 
 
-		// if( (obstacleRight > playerLeft && obstacleBottom < playerTop && obstacleTop > playerTop && obstacleLeft < playerLeft) ||
-			// (obstacleRight > playerRight && obstacleBottom < playerTop && obstacleTop > playerTop && obstacleLeft < playerRight) ||
-			// (obstacleRight > playerLeft && obstacleBottom < playerBottom && obstacleTop > playerBottom && obstacleLeft < playerLeft) ||
-			// (obstacleRight > playerRight && obstacleBottom < playerBottom && obstacleTop > playerBottom && obstacleLeft < playerRight) ) 
-				// return true;
+		 if( (obstacleRight > playerLeft && obstacleBottom < playerTop && obstacleTop > playerTop && obstacleLeft < playerLeft) ||
+			 (obstacleRight > playerRight && obstacleBottom < playerTop && obstacleTop > playerTop && obstacleLeft < playerRight) ||
+			 (obstacleRight > playerLeft && obstacleBottom < playerBottom && obstacleTop > playerBottom && obstacleLeft < playerLeft) ||
+			 (obstacleRight > playerRight && obstacleBottom < playerBottom && obstacleTop > playerBottom && obstacleLeft < playerRight) ) 
+				 return true;
 
-		// return false;
-	// }
+		 return false;
+	 }
 
 	public void destroy() {
-		getHolder().removeCallback(this);
+		
 //		boolean retry = true;
 //		while (retry) {
 //			try {
@@ -494,8 +494,20 @@ public class MainGamePanel extends SurfaceView implements
 //				// try again shutting down the thread
 //			}
 //		}
+		getHolder().removeCallback(this);
+		for(Zombie zombie : zombies) {
+			zombie.destroy();
+		}
+		for(Health health : heals) {
+			health.destroy();
+		}
+		for(Obstacle obstacle : obstacles) {
+			obstacle.destroy();
+		}
+		player.destroy();
 		zombies.clear();
 		heals.clear();
+		obstacles.clear();
 		player = null;
 		generator = null;
 	}
