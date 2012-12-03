@@ -5,7 +5,7 @@ import android.graphics.Canvas;
 
 public class Player {
 	
-	private float life;
+	private int life;
 	private int lifeCount;
 	private int healthPieces;
 	private int killCount;
@@ -45,12 +45,12 @@ public class Player {
 		this.y = y;
 	}
 	
-	public float getLife() {
+	public int getLife() {
 		return this.life;
 	}
 	
 	public void decrementLife() {
-		this.life -= 0.5;
+		this.life -= 1;
 		if(this.life <= 0) {
 			if(this.lifeCount <= 0) {
 				isDead = true;
@@ -104,10 +104,6 @@ public class Player {
 		if(this.y + speed > left && this.y + speed < right) {
 			this.y += speed;
 		}
-	}
-	
-	public void destroy() {
-		this.image.recycle();
 	}
 	
 }

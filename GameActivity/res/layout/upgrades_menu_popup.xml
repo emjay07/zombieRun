@@ -1,193 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	    xmlns:tools="http://schemas.android.com/tools"    
-		android:orientation = "horizontal"
-		android:background = "@android:color/darker_gray"
-		android:layout_width = "fill_parent"
-		android:layout_height = "fill_parent" >
-	
-	<LinearLayout
-		android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="horizontal"
-		android:layout_weight = "1">
-		    
-	    <RelativeLayout
-	         android:id="@+id/RelativeLayout1"
-	         android:layout_width="fill_parent"
-	         android:layout_height="fill_parent"
-	         android:layout_margin="5dp"
-	         android:orientation="vertical" >
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    android:background="@android:color/background_light">
+ <LinearLayout 
+     android:layout_width="fill_parent"
+     android:layout_height="fill_parent"
+     android:orientation="vertical" 
+     android:layout_margin="1dp"
+     android:background="@android:color/darker_gray">
+
+     <RelativeLayout
+         android:id="@+id/RelativeLayout1"
+         android:layout_width="fill_parent"
+         android:layout_height="fill_parent"
+         android:layout_margin="5dp"
+         android:orientation="vertical" >
 
-	         <TextView
-	             android:id="@+id/upgradesTextView1"
-	             android:layout_width="wrap_content"
-	             android:layout_height="wrap_content"
-	             android:textColor = "#000000"
-	             android:text="Ranged"
-	             android:textAppearance="?android:attr/textAppearanceLarge"
-	             android:textStyle="bold" />
-	
-	         <TextView
-	             android:id="@+id/upgradesTextView2"
-	             android:layout_width="wrap_content"
-	             android:layout_height="wrap_content"
-	             android:layout_alignParentLeft="true"
-	             android:layout_below="@+id/upgradesTextView1"
-	             android:textColor = "#000000"
-	             android:layout_marginTop = "20dp"
-	             android:text="Range"
-	             android:textAppearance="?android:attr/textAppearanceMedium" />
-	
-	         <Button
-	             android:id="@+id/rangePlus"
-	             style="?android:attr/buttonStyleSmall"
-	             android:layout_width="wrap_content"
-	             android:layout_height="wrap_content"
-	             android:layout_above="@+id/rangeText"
-	             android:layout_alignLeft="@+id/rangeText"
-	             android:text="+"
-	             android:textColor="#000000" />
-	
-	         <Button
-	             android:id="@+id/rangeMinus"
-	             style="?android:attr/buttonStyleSmall"
-	             android:layout_width="wrap_content"
-	             android:layout_height="wrap_content"
-	             android:layout_alignLeft="@+id/rangeText"
-	             android:layout_below="@+id/rangeText"
-	             android:text="-"
-	             android:textColor="#000000" />
-	
-	         <TextView
-	             android:id="@+id/rangeText"
-	             android:layout_width="wrap_content"
-	             android:layout_height="wrap_content"
-	             android:layout_alignTop="@+id/upgradesTextView2"
-	             android:layout_toRightOf="@+id/upgradesTextView2"
-	             android:textColor = "#000000"
-	             android:text = "3"
-	             android:layout_marginLeft = "44dp"
-	             android:textAppearance="?android:attr/textAppearanceSmall" />
+         <TextView
+             android:id="@+id/textView1"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="Ranged"
+             android:textAppearance="?android:attr/textAppearanceLarge"
+             android:textStyle="bold" />
 
-	         <TextView
-	             android:id="@+id/upgradesTextView3"
-	             android:layout_width="wrap_content"
-	             android:layout_height="wrap_content"
-	             android:layout_below = "@+id/upgradesTextView2"
-	             android:textColor = "#000000"
-	             android:layout_marginTop = "20dp"
-	             android:text="Melee"
-	             android:textAppearance="?android:attr/textAppearanceLarge"
-	             android:textStyle="bold" />
-	
-	         <TextView
-	             android:id="@+id/upgradesTextView4"
-	             android:layout_width="wrap_content"
-	             android:layout_height="wrap_content"
-	             android:layout_alignParentLeft="true"
-	             android:layout_below="@+id/upgradesTextView3"
-	             android:textColor = "#000000"
-	             android:layout_marginTop = "20dp"
-	             android:text="range"
-	             android:textAppearance="?android:attr/textAppearanceMedium" />
-	
-	         <Button
-	             android:id="@+id/meleePlus"
-	             style="?android:attr/buttonStyleSmall"
-	             android:layout_width="wrap_content"
-	             android:layout_height="wrap_content"
-	             android:layout_above="@+id/meleeText"
-	             android:layout_alignLeft="@+id/meleeText"
-	             android:text="+"
-	             android:textColor="#000000" />
-	
-	         <Button
-	             android:id="@+id/meleeMinus"
-	             style="?android:attr/buttonStyleSmall"
-	             android:layout_width="wrap_content"
-	             android:layout_height="wrap_content"
-	             android:layout_alignLeft="@+id/meleeText"
-	             android:layout_below="@+id/meleeText"
-	             android:text="-"
-	             android:textColor="#000000" />
-	
-	         <TextView
-	             android:id="@+id/meleeText"
-	             android:layout_width="wrap_content"
-	             android:layout_height="wrap_content"
-	             android:layout_alignTop="@+id/upgradesTextView4"
-	             android:layout_toRightOf="@+id/upgradesTextView4"
-	             android:textColor = "#000000"
-	             android:text = "3"
-	             android:layout_marginLeft = "44dp"
-	             android:textAppearance="?android:attr/textAppearanceSmall" />
-         
-     </RelativeLayout>    
+         <TextView
+             android:id="@+id/textView2"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignParentLeft="true"
+             android:layout_below="@+id/textView1"
+             android:layout_marginTop = "20dp"
+             android:text="Range"
+             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-	</LinearLayout>
-	
-	<LinearLayout 
-		android:orientation = "vertical"
-		android:layout_width = "fill_parent"
-		android:layout_height = "fill_parent"
-		android:layout_weight = "4" >
-		    
-		<LinearLayout
-			android:layout_width="match_parent"
-		    android:layout_height="match_parent"
-		    android:orientation="vertical"
-		    android:background = "#000000" >  
-		    
-		    <Button
-		        android:id="@+id/upgradesButton1"
-		        android:layout_width="match_parent"
-		        android:layout_height="0dp"
-		        android:layout_gravity="right"
-		        android:layout_weight="1"
-		        android:background = "#aa0000"
-		        android:layout_marginBottom = "5dp"
-		        android:text="@string/PlayButton" />
-		
-		    <Button
-		        android:id="@+id/upgradesButton2"
-		        android:layout_width="match_parent"
-		        android:layout_height="0dp"
-		        android:layout_gravity="right"
-		        android:layout_weight="1"
-		        android:background = "#aa0000"
-		        android:layout_marginBottom = "5dp"
-		        android:text="@string/SelectLevelButton" />
-		
-		    <Button
-		        android:id="@+id/upgradesButton3"
-		        android:layout_width="match_parent"
-		        android:layout_height="0dp"
-		        android:layout_gravity="right"
-		        android:layout_weight="1"
-		        android:background = "#aa0000"
-		        android:layout_marginBottom = "5dp"
-		        android:text="@string/UpgradesButton" />
-		
-		    <Button
-		        android:id="@+id/upgradesButton4"
-		        android:layout_width="match_parent"
-		        android:layout_height="0dp"
-		        android:layout_gravity="right"
-		        android:layout_weight="1"
-		        android:background = "#aa0000"
-		        android:layout_marginBottom = "5dp"
-		        android:text="@string/StatisticsButton" />
-		
-		    <Button
-		        android:id="@+id/upgradesButton5"
-		        android:layout_width="match_parent"
-		        android:layout_height="0dp"
-		        android:layout_gravity="right"
-		        android:layout_weight="1"
-		        android:background = "#aa0000"
-		        android:layout_marginBottom = "5dp"
-		        android:text="@string/TutorialButton" />
-		</LinearLayout>
-	</LinearLayout>
+         <Button
+             android:id="@+id/rangePlus"
+             style="?android:attr/buttonStyleSmall"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_above="@+id/rangeText"
+             android:layout_alignLeft="@+id/rangeText"
+             android:text="+" />
+
+         <Button
+             android:id="@+id/rangeMinus"
+             style="?android:attr/buttonStyleSmall"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignLeft="@+id/rangeText"
+             android:layout_below="@+id/rangeText"
+             android:text="-" />
+
+         <TextView
+             android:id="@+id/rangeText"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignTop="@+id/textView2"
+             android:layout_toRightOf="@+id/textView2"
+             android:layout_marginLeft = "44dp"
+             android:text=""
+             android:textAppearance="?android:attr/textAppearanceSmall" />
+
+     </RelativeLayout>
+
+ </LinearLayout>
 </LinearLayout>
