@@ -10,12 +10,22 @@ public class Health {
 	private int x;			// the X coordinate
 	private int y;			// the Y coordinate
 	private Speed speed;	// the speed with its directions
+	int score;
 	
-	public Health(Bitmap bitmap, int x, int y, float vel) {
+	public Health(Bitmap bitmap, int x, int y, int vel, int score) {
 		this.bitmap = bitmap;
 		this.x = x;
 		this.y = y;
-		this.speed = new Speed(1,0);
+		this.speed = new Speed(vel,0);
+		this.score = score;
+	}
+	
+	public int getScore() {
+		return this.score;
+	}
+	
+	public void setScore(int s) {
+		this.score = s;
 	}
 	
 	public Bitmap getBitmap() {
