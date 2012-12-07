@@ -77,8 +77,8 @@ public class Player {
 	public void addHealthPieces(int add) {
 		if(add > 0) {
 			this.healthPieces += add;
-			if(this.healthPieces >= 100) {
-				this.healthPieces -= 100;
+			if(this.healthPieces >= 50) {
+				this.healthPieces -= 50;
 				this.lifeCount++;
 			}
 		}

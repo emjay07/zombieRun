@@ -71,9 +71,11 @@ public class MainGamePanel extends SurfaceView implements
 	private float ySpeed = 0;
 	private int num = 1;
 	private boolean speedBar = false;
-	private boolean pause;
+	private boolean pause = false;
 	private boolean endLevel = false;
 	private boolean dead = false;
+	private boolean mission = false;
+	private boolean once = false;
 	private Vibrator vibe;
 	private Bitmap _zombie = BitmapFactory.decodeResource(getResources(), R.drawable.zombie);
 	private Bitmap _player = BitmapFactory.decodeResource(getResources(), R.drawable.player);
@@ -110,9 +112,9 @@ public class MainGamePanel extends SurfaceView implements
 		leftbound = (float)((1.0/6.0) * width);
 		rightbound = (float)((5.0/6.0) * width);
 		margin = (float)(leftbound/10.0);
-		progressMin = leftbound+margin-10;
-		progressMax = margin+10;
-		progressCurr = progressMin;
+		progressMin = width-leftbound-margin;
+		progressMax = width-margin;
+		progressCurr = 0;
 		speedBarMax = margin+barHeight+70;
 		speedBarMin = height-margin-barHeight-40;
 		speedCurr = (speedBarMax + speedBarMin)/2;
@@ -130,7 +132,11 @@ public class MainGamePanel extends SurfaceView implements
 	    			//@Override  
 	    			public void onSensorChanged(SensorEvent event) {  
 	    			    //set speed based on phone tilt (ignore X and Z axes)
-	    				ySpeed = event.values[1];
+	    				if(width < 550){
+	    					ySpeed = -               event.values[0];
+	    				}else{
+	    					ySpeed = event.values[1];
+	    				}
 	    			}
 	        		//@Override  
 	        		public void onAccuracyChanged(Sensor sensor, int accuracy) {} //ignore this event
@@ -268,27 +274,32 @@ public class MainGamePanel extends SurfaceView implements
 						eventY >= (height-margin-barHeight) && eventY <=(height-margin)) {
 						pause = !pause;
 				}
+				//if within the range
 				if(eventX >= (player.getY()-2*leftbound) && eventX <= (player.getY()+2*leftbound)
 						&& eventY <= (player.getX()+2*leftbound) && eventY >= (player.getX()-2*leftbound)) {
 					for(int i = 0; i < zombies.size(); i++) {
 						Zombie zombie = zombies.get(i);
+						//if in a zombie
 						if (eventX >= (zombie.getY() - zombie.getBitmap().getWidth() / 2) && (eventX <= (zombie.getY() + zombie.getBitmap().getWidth()/2))
 							&& eventY >= (zombie.getX() - zombie.getBitmap().getHeight() / 2) && (eventY <= (zombie.getX() + zombie.getBitmap().getHeight() / 2))) {
 								// touch was released
 								zombies.remove(i);
 								int y;
-								int xDirection;
 								int rand = generator.nextInt()%2;
 								if(rand == 0) {
 									y = 0;
-									xDirection = -1;
 								} else {
 									y = width;
-									xDirection = 1;
 								}
-								int x = generator.nextInt(height/2);
-								Zombie z = new Zombie(_zombie, x, y);
-								zombies.add(z);
+								if(!mission) {
+									int x = generator.nextInt(height/2);
+									Zombie z = new Zombie(_zombie, x, y);
+									zombies.add(z);
+								} else {
+									if(zombies.size() <= 0) {
+										mission = false;
+									}
+								}
 								player.incrementKillCount();
 						}
 					}
@@ -328,21 +339,23 @@ public class MainGamePanel extends SurfaceView implements
 		for(Zombie zombie : zombies) {
 			zombie.draw(canvas);
 		}
-		for(Health health : heals) {
-			health.draw(canvas);
-		}
-		for(Obstacle obs : obstacles) {
-			obs.draw(canvas);
+		if(!mission) {
+			for(Health health : heals) {
+				health.draw(canvas);
+			}
+			for(Obstacle obs : obstacles) {
+				obs.draw(canvas);
+			}
 		}
 		
 		int alpha_o = 200;
 		int alpha_t = 100;
 		
 		/** Draw Player **/
-		paint.setARGB(alpha_t, 255, 0, 0);
+		paint.setARGB(alpha_t, 163, 73, 164);
 		paint.setStyle(Paint.Style.FILL);
-		canvas.drawCircle(player.getY(), player.getX(), 2*leftbound, paint);
-		paint.setARGB(alpha_t, 255, 128, 0);
+		canvas.drawCircle(player.getY(), player.getX(), leftbound*3/2, paint);
+		paint.setARGB(alpha_t, 0, 128, 255);
 		canvas.drawCircle(player.getY(), player.getX(), leftbound, paint);
 		player.draw(canvas);
 		/** Draw Player **/
@@ -366,19 +379,20 @@ public class MainGamePanel extends SurfaceView implements
 		/** HEALTH **/
 		
 		/** MINI MAP **/
-		//draw background
-		paint.setARGB(alpha_t, 128, 128, 128);
-		paint.setStyle(Paint.Style.FILL);
-		canvas.drawRect(width-(leftbound+margin), margin, width-margin, leftbound+margin, paint);
-		//draw outline
-		paint.setARGB(alpha_o, 0, 0, 0);
-		paint.setStyle(Paint.Style.STROKE);
-		canvas.drawRect(width-(leftbound+margin), margin, width-margin, leftbound+margin, paint);
-		//draw progress bar
-		float midpoint = (float)(width-(((1.0/2.0)*leftbound)+margin));
-		
-		canvas.drawLine(midpoint, progressMin, midpoint, progressMax, paint);
-		canvas.drawBitmap(_progress, midpoint-15, progressCurr-20, paint);
+		if(!mission) {
+			//draw progress meter
+			paint.setARGB(alpha_o, 255, 242, 0);
+			paint.setStyle(Paint.Style.FILL);
+			canvas.drawRect(width-leftbound-margin, margin, (progressMin)+progressCurr, margin+barHeight, paint);
+			//draw outline
+			paint.setARGB(alpha_o, 255, 211, 14);
+			paint.setStrokeWidth(2);
+			paint.setStyle(Paint.Style.STROKE);
+			canvas.drawRect(width-leftbound-margin, margin, progressMax, margin+barHeight, paint);
+			paint.setARGB(alpha_o, 0, 0, 255);
+			float midpoint = progressMin+((progressMax-progressMin)/2);
+			canvas.drawLine(midpoint, margin, midpoint, margin+barHeight, paint);
+		}
 		/** MINI MAP **/
 		
 		/** KILL COUNT **/
@@ -390,7 +404,8 @@ public class MainGamePanel extends SurfaceView implements
 		paint.setARGB(alpha_o, 0, 0, 0);
 		paint.setStyle(Paint.Style.STROKE);
 		canvas.drawRect(width-(barHeight+margin), height-margin-barHeight, width-margin, height-margin, paint);
-		canvas.drawText(""+player.getKillCount(), width-(barHeight+margin-5), height-margin-5, paint);
+		paint.setStrokeWidth(1);
+		canvas.drawText("Kills  "+player.getKillCount(), width-(barHeight+margin+20), height-margin-5, paint);
 		/** KILL COUNT **/
 		
 		/** PAUSE BUTTON **/
@@ -417,11 +432,13 @@ public class MainGamePanel extends SurfaceView implements
 		/** PAUSE BUTTON **/
 		
 		/** SPEED BAR **/
-		paint.setARGB(alpha_o, 0, 0, 0);
-		paint.setStyle(Paint.Style.STROKE);
-		canvas.drawLine(barHeight, speedBarMin, barHeight, speedBarMax, paint);
-		paint.setStyle(Paint.Style.FILL);
-		canvas.drawRect(margin, speedCurr, margin+barHeight, speedCurr+(barHeight-margin), paint);
+		if(!mission) {
+			paint.setARGB(alpha_o, 0, 0, 0);
+			paint.setStyle(Paint.Style.STROKE);
+			canvas.drawLine(barHeight, speedBarMin, barHeight, speedBarMax, paint);
+			paint.setStyle(Paint.Style.FILL);
+			canvas.drawRect(margin, speedCurr, margin+barHeight, speedCurr+(barHeight-margin), paint);
+		}
 		/** SPEED BAR **/
 		
 		
@@ -467,6 +484,12 @@ public class MainGamePanel extends SurfaceView implements
 			//death picture
 			canvas.drawBitmap(_death, width/4, height/4, paint);
 		}
+		
+		if(mission) {
+			//draw building
+			paint.setARGB(255, 0, 0, 0);
+			canvas.drawBitmap(_building, rightbound+margin, leftbound, paint);
+		}
 	}
 
 	/**
@@ -481,32 +504,41 @@ public class MainGamePanel extends SurfaceView implements
 			dead = player.getIsDead();
 			player.setBitmap(_player);
 			//update progress
-			float inc = (float) 0.01;
-			if(progressCurr <= progressMax+10) {
+			
+			float inc = (float) 0.02;
+			float midpoint = progressMin+((progressMax-progressMin)/2);
+			if(progressMin+progressCurr >= midpoint && !once) {
+				//mission
+				mission = true;
+				once = true;
+			}
+			else if(progressMin+progressCurr >= progressMax) {
 				endLevel = true;
 			} else {
-				progressCurr -= inc;
+				if(!mission) {
+					progressCurr += inc;
+				}
 			}
 			
 			for(Zombie zombie : zombies) {
 				// check collision with right wall if heading right
 				if (zombie.getSpeed().getxDirection() == Speed.DIRECTION_RIGHT
-						&& zombie.getX() + zombie.getBitmap().getWidth() / 2 >= getWidth()) {
+						&& zombie.getX() + zombie.getBitmap().getHeight() / 2 >= getHeight()) {
 					zombie.getSpeed().toggleXDirection();
 				}
 				// check collision with left wall if heading left
 				if (zombie.getSpeed().getxDirection() == Speed.DIRECTION_LEFT
-						&& zombie.getX() - zombie.getBitmap().getWidth() / 2 <= 0) {
+						&& zombie.getX() - zombie.getBitmap().getHeight() / 2 <= 0) {
 					zombie.getSpeed().toggleXDirection();
 				}
 				// check collision with bottom wall if heading down
 				if (zombie.getSpeed().getyDirection() == Speed.DIRECTION_DOWN
-						&& zombie.getY() + zombie.getBitmap().getHeight() / 2 >= getHeight()) {
+						&& zombie.getY() + zombie.getBitmap().getWidth() / 2 >= getWidth()) {
 					zombie.getSpeed().toggleYDirection();
 				}
 				// check collision with top wall if heading up
 				if (zombie.getSpeed().getyDirection() == Speed.DIRECTION_UP
-						&& zombie.getY() - zombie.getBitmap().getHeight() / 2 <= 0) {
+						&& zombie.getY() - zombie.getBitmap().getWidth() / 2 <= 0) {
 					zombie.getSpeed().toggleYDirection();
 				}
 
@@ -524,69 +556,72 @@ public class MainGamePanel extends SurfaceView implements
 
 				zombie.update();
 			}
-			for(Health health : heals) {
-				health.update();
-				if(health.getX() >= height) {
-					heals.remove(health);
-					Bitmap heal;
-					int score;
-					int rand = generator.nextInt()%3;
-					if(rand < 2) {
-						heal = _smallOrb;
-						score = 2;
-					} else {
-						heal = _bigOrb;
-						score = 5;
-					}
-					heals.add(new Health(heal, 0, generator.nextInt((int)(rightbound-leftbound))+(int)leftbound, objectSpeed, score));
-				}
-				if(isCollision(player, health)) {
-					player.addHealthPieces(health.getScore());
-					heals.remove(health);
-					Bitmap heal;
-					int score;
-					int rand = generator.nextInt()%3;
-					if(rand < 2) {
-						heal = _smallOrb;
-						score = 2;
-					} else {
-						heal = _bigOrb;
-						score = 5;
-					}
-					heals.add(new Health(heal, 0, generator.nextInt((int)(rightbound-leftbound))+(int)leftbound, objectSpeed, score));
-					//increase health of player
-					//make health orb go away
-				}
-			}
 			
-			for(Obstacle obstacle : obstacles) {
-				obstacle.update();
-				if(obstacle.getX() >= height) {
-					obstacle.setX(0);
-					Bitmap obs;
-					int rand = generator.nextInt()%4;
-					if(rand == 0)
-						obs = _boulder;
-					else if(rand == 1)
-						obs = _tree;
-					else if(rand == 2)
-						obs = _streetLamp;
-					else
-						obs = _car;
-					obstacle.setBitmap(obs);
-					obstacle.setSpeed(objectSpeed);
-					obstacle.setY(generator.nextInt((int)(rightbound-leftbound))+(int)leftbound);
+			if(!mission) {
+				for(Health health : heals) {
+					health.update();
+					if(health.getX() >= height) {
+						heals.remove(health);
+						Bitmap heal;
+						int score;
+						int rand = generator.nextInt()%3;
+						if(rand < 2) {
+							heal = _smallOrb;
+							score = 2;
+						} else {
+							heal = _bigOrb;
+							score = 5;
+						}
+						heals.add(new Health(heal, 0, generator.nextInt((int)(rightbound-leftbound))+(int)leftbound, objectSpeed, score));
+					}
+					if(isCollision(player, health)) {
+						player.addHealthPieces(health.getScore());
+						heals.remove(health);
+						Bitmap heal;
+						int score;
+						int rand = generator.nextInt()%3;
+						if(rand < 2) {
+							heal = _smallOrb;
+							score = 2;
+						} else {
+							heal = _bigOrb;
+							score = 5;
+						}
+						heals.add(new Health(heal, 0, generator.nextInt((int)(rightbound-leftbound))+(int)leftbound, objectSpeed, score));
+						//increase health of player
+						//make health orb go away
+					}
 				}
 				
-				if( isCollision(player, obstacle) ) {
-					player.decrementLife();
-					vibe.vibrate(500);
-					player.setBitmap(_red);
-//					zombies.remove(zombie);
-//					Zombie z = new Zombie(_zombie, generator.nextInt()%height + 10, generator.nextInt()%width + 10);
-//					zombies.add(z);
-					//take away health
-					//maybe do something else
+				for(Obstacle obstacle : obstacles) {
+					obstacle.update();
+					if(obstacle.getX() >= height) {
+						obstacle.setX(0);
+						Bitmap obs;
+						int rand = generator.nextInt()%4;
+						if(rand == 0)
+							obs = _boulder;
+						else if(rand == 1)
+							obs = _tree;
+						else if(rand == 2)
+							obs = _streetLamp;
+						else
+							obs = _car;
+						obstacle.setBitmap(obs);
+						obstacle.setSpeed(objectSpeed);
+						obstacle.setY(generator.nextInt((int)(rightbound-leftbound))+(int)leftbound);
+					}
+					
+					if( isCollision(player, obstacle) ) {
+						player.decrementLife();
+						vibe.vibrate(500);
+						player.setBitmap(_red);
+	//					zombies.remove(zombie);
+	//					Zombie z = new Zombie(_zombie, generator.nextInt()%height + 10, generator.nextInt()%width + 10);
+	//					zombies.add(z);
+						//take away health
+						//maybe do something else
+					}
 				}
 			}
 
@@ -682,9 +717,5 @@ public class MainGamePanel extends SurfaceView implements
 		obstacles.clear();
 		player = null;
 		generator = null;
-	}
-	
-	private void mission(Canvas canvas) {
-		//canvas.drawBitmap(bitmap, left, top, paint);
 	}
 }
